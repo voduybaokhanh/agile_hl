@@ -57,14 +57,14 @@ mongoose.connect('mongodb://localhost:27017/Agile', {
 
 //http://localhost:3000/home
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/phims', phimRouter);
-app.use('/ves', veRouter);
-app.use('/suatchieus', suatchieuRouter);
-app.use('/giohangs', giohangRouter);
-app.use('/tichdiems', tichdiemRouter);
-app.use('/khuyenmais', khuyenmaiRouter);
-app.use('/admins', adminRouter);
+app.use('/user', usersRouter);
+app.use('/phim', phimRouter);
+app.use('/ve', veRouter);
+app.use('/suatchieu', suatchieuRouter);
+app.use('/giohang', giohangRouter);
+app.use('/tichdiem', tichdiemRouter);
+app.use('/khuyenmai', khuyenmaiRouter);
+app.use('/admin', adminRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
