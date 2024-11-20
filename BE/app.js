@@ -4,8 +4,28 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+//config mogoose
+const mongoose = require('mongoose');
+require('./models/User');
+require('./models/Phim');
+require('./models/Ve');
+require('./models/Suatchieu');
+require('./models/Giohang');
+require('./models/Tichdiem');
+require('./models/Khuyenmai');
+require('./models/Admin');
+
+
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var phimRouter = require('./routes/phims');
+var veRouter = require('./routes/ves');
+var suatchieuRouter = require('./routes/suatchieus');
+var giohangRouter = require('./routes/giohangs');
+var tichdiemRouter = require('./routes/tichdiems');
+var khuyenmaiRouter = require('./routes/khuyenmais');
+var adminRouter = require('./routes/admins');
 
 var app = express();
 
@@ -19,8 +39,32 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+//swagger
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./utils/configSwagger');
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+//connect database
+//mongodb://localhost:27017/
+mongoose.connect('mongodb://localhost:27017/Agile', {
+  // mongoose.connect('mongodb+srv://khanhvo908:0774749399@cluster0.g5qbg.mongodb.net/MD19201', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+  .then(() => console.log('>>>>>>>>>> DB Connected!!!!!!'))
+  .catch(err => console.log('>>>>>>>>> DB Error: ', err));
+
+
+//http://localhost:3000/home
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/phims', phimRouter);
+app.use('/ves', veRouter);
+app.use('/suatchieus', suatchieuRouter);
+app.use('/giohangs', giohangRouter);
+app.use('/tichdiems', tichdiemRouter);
+app.use('/khuyenmais', khuyenmaiRouter);
+app.use('/admins', adminRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
