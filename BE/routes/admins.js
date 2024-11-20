@@ -3,8 +3,8 @@ var router = express.Router();
 var adminRouter = require('../models/Admin');
 
 //lất tất cả danh sách của admin
-//http://localhost:3000/admin
-router.get('/', async function (req, res, next) {
+//http://localhost:3000/admin/list
+router.get('/list', async function (req, res, next) {
   const admin = await adminRouter.find();
   res.json(admin);
 });
@@ -42,6 +42,36 @@ router.post('/login', async function (req, res, next) {
     }
   } catch (err) {
     res.json({ status: false, message: 'Đăng nhập thất bại: ' + err.message });
+  }
+});
+
+//xóa
+//http://localhost:3000/admin/delete
+router.delete('/delete', async function (req, res, next) {
+  try {
+    const { email } = req.body;
+    await adminRouter.deleteOne({ email: email });
+    res.json({ status: true, message: 'Xóa thành công' });
+  } catch (err) {
+    res.json({ status: false, message: 'Xóa thất bại' + err.message });
+  }
+});
+
+//sửa, chỉ sửa được name và password và coi email có tồn tai không
+//http://localhost:3000/admin/update
+router.put('/update', async function (req, res, next) {
+  try {
+    const { email, name, password } = req.body;
+    const admin = await adminRouter.findOne
+      ({ email: email });
+    if (admin) {
+      await adminRouter.updateOne({ email: email }, { name: name, password: password });
+      res.json({ status: true, message: 'Sửa thành công' });
+    } else {
+      res.json({ status: false, message: 'Email không tồn tại' });
+    }
+  } catch (err) {
+    res.json({ status: false, message: 'Sửa thất bại' + err.message });
   }
 });
 

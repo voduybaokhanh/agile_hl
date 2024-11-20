@@ -7,7 +7,7 @@ const tichDiem = new Schema({
     diemCong: { type: Number, default: 0 },
     diemTru: { type: Number, default: 0 },
     ngayGiaoDich: { type: Date, default: Date.now },
-    user: { type: ObjectId, ref: 'user'}
+    user: { type: ObjectId, ref: 'user',required: true}
 });
 
 module.exports = mongoose.models.tichDiem || mongoose.model('tichDiem', tichDiem);

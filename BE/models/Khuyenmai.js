@@ -9,7 +9,7 @@ const khuyenMai = new Schema({
     mucGiamGia: { type: Number, required: true },
     ngayBatDau: { type: Date, required: true },
     ngayKetThuc: { type: Date, required: true },
-    user: { type: ObjectId, ref: 'user'}
+    user: { type: ObjectId, ref: 'user',required: true}
 });
 
 module.exports = mongoose.models.khuyenMai || mongoose.model('khuyenMai', khuyenMai);

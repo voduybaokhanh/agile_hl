@@ -55,7 +55,7 @@ mongoose.connect('mongodb://localhost:27017/Agile', {
   .catch(err => console.log('>>>>>>>>> DB Error: ', err));
 
 
-//http://localhost:3000/home
+//http://localhost:3000/api-docs
 app.use('/', indexRouter);
 app.use('/user', usersRouter);
 app.use('/phim', phimRouter);
