@@ -37,7 +37,7 @@ router.post("/detail", async (req, res) => {
 // POST http://localhost:3000/user/add
 router.post("/add", async (req, res) => {
   try {
-    const { name, email, password, diemtichluy } = req.body;
+    const { name, email, password} = req.body;
     if (!name || !email || !password) {
       return res.json({
         status: false,
@@ -47,8 +47,7 @@ router.post("/add", async (req, res) => {
     const newUser = new usersRouter({
       name,
       email,
-      password,
-      diemtichluy: diemtichluy || 0, // Mặc định 0 nếu không truyền
+      password
     });
     await newUser.save();
     res.json({
@@ -68,13 +67,13 @@ router.post("/add", async (req, res) => {
 // PUT http://localhost:3000/user/update
 router.put("/update", async (req, res) => {
   try {
-    const { id, name, email, password, diemtichluy } = req.body;
+    const { id, name, email, password } = req.body;
     if (!id) {
       return res.json({ status: false, message: "ID không được để trống" });
     }
     const updatedUser = await usersRouter.findByIdAndUpdate(
       id,
-      { name, email, password, diemtichluy },
+      { name, email, password },
       { new: true, runValidators: true }
     );
     if (!updatedUser) {

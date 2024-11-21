@@ -21,11 +21,6 @@ const user = new Schema(
       type: String,
       required: [true, "Mật khẩu không được để trống"],
     },
-    diemtichluy: {
-      type: Number,
-      default: 0,
-      min: [0, "Điểm tích lũy không được âm"],
-    },
   },
   { timestamps: true } // Thêm createdAt và updatedAt
 );
