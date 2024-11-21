@@ -12,7 +12,6 @@ const gioHang = new Schema({
     default: "pending",
   },
   user: { type: ObjectId, ref: "user", required: true },
-  khuyenMai: { type: ObjectId, ref: "khuyenMai", required: true },
 });
 
 module.exports = mongoose.models.gioHang || mongoose.model("gioHang", gioHang);
