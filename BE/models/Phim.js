@@ -5,12 +5,12 @@ const ObjectId = Schema.ObjectId;
 const phim = new Schema(
   {
     id: { type: ObjectId },
-    tenPhim: { type: String, required: true },
-    moTa: { type: String },
-    thoiLuong: { type: Number },
-    theLoai: { type: String },
+    tenPhim: { type: String, required: true, trim: true },
+    moTa: { type: String, trim: true },
+    thoiLuong: { type: Number, min: 1 }, // Không thể có thời gian âm
+    theLoai: { type: String, trim: true },
     ngayPhatHanh: { type: Date },
-    trailer: { type: String },
+    trailer: { type: String, match: /^https?:\/\/.+/ }, // Kiểm tra URL hợp lệ
     admin: { type: ObjectId, ref: "admin", required: true },
   },
   { timestamps: true }

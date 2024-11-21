@@ -30,7 +30,6 @@ const khuyenMai = new Schema(
       enum: ["active", "inactive"],
       default: "active",
     },
-    soLuong: { type: Number, default: 0 },
     admin: { type: ObjectId, ref: "admin", required: true },
   },
   { timestamps: true }
