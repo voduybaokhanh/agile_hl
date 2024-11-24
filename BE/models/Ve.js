@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
-const thanhtoan = new Schema(
+const ve = new Schema(
   {
     id: { type: ObjectId },
     gheNgoi: {
@@ -15,9 +15,9 @@ const thanhtoan = new Schema(
       required: true,
       min: 0, // Giá vé không thể âm
     },
-    suatChieu: {
+    suatchieu: {
       type: Schema.Types.ObjectId,
-      ref: "SuatChieu",
+      ref: "suatchieu",
       required: true, // Tham chiếu tới bảng Suất Chiếu
     },
     user: {
@@ -28,5 +28,4 @@ const thanhtoan = new Schema(
   },
   { timestamps: true } // Tự động thêm trường createdAt và updatedAt
 );
-module.exports =
-  mongoose.models.thanhtoan || mongoose.model("thanhtoan", thanhtoan);
+module.exports = mongoose.models.ve || mongoose.model("ve", ve);
