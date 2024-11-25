@@ -1,11 +1,36 @@
+/**
+ * @swagger
+ * tags:
+ *   name: PhongChieu
+ *   description: API quản lý các phòng chiếu
+ */
+
 var express = require('express');
 var router = express.Router();
 var rapRouter = require("../models/Rap");
 var phongchieuRouter = require("../models/PhongChieu");
 
-
-// Lấy danh sách tất cả các phòng chiếu
-// http://localhost:3000/phongchieu/get-all
+/**
+ * @swagger
+ * /phongchieu/get-all:
+ *   get:
+ *     summary: Lấy danh sách tất cả các phòng chiếu
+ *     tags: [PhongChieu]
+ *     responses:
+ *       200:
+ *         description: Danh sách các phòng chiếu
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                 danhSachPhongChieu:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ */
 router.get("/get-all", async (req, res, next) => {
   try {
     const danhSachPhongChieu = await phongchieuRouter.find().populate("rap");
@@ -18,13 +43,46 @@ router.get("/get-all", async (req, res, next) => {
   }
 });
 
-// Tạo mới một phòng chiếu
-// http://localhost:3000/phongchieu/add
+/**
+ * @swagger
+ * /phongchieu/add:
+ *   post:
+ *     summary: Tạo mới một phòng chiếu
+ *     tags: [PhongChieu]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               TenPhongChieu:
+ *                 type: string
+ *               SoGhe:
+ *                 type: integer
+ *               rap:
+ *                 type: string
+ *               TrangThai:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Thông tin phòng chiếu mới tạo
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ */
 router.post("/add", async (req, res, next) => {
   try {
     const { TenPhongChieu, SoGhe, rap, TrangThai } = req.body;
 
-    // Kiểm tra xem rạp có tồn tại không
     const rapTonTai = await rapRouter.findById(rap);
     if (!rapTonTai) {
       return res.json({ status: false, message: "Rạp không tồn tại" });
@@ -45,19 +103,53 @@ router.post("/add", async (req, res, next) => {
   }
 });
 
-// Cập nhật thông tin phòng chiếu
-// http://localhost:3000/phongchieu/update
+/**
+ * @swagger
+ * /phongchieu/update:
+ *   post:
+ *     summary: Cập nhật thông tin phòng chiếu
+ *     tags: [PhongChieu]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: string
+ *               TenPhongChieu:
+ *                 type: string
+ *               SoGhe:
+ *                 type: integer
+ *               rap:
+ *                 type: string
+ *               TrangThai:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Thông tin phòng chiếu sau khi cập nhật
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ */
 router.post("/update", async (req, res, next) => {
   try {
     const { id, TenPhongChieu, SoGhe, rap, TrangThai } = req.body;
 
-    // Kiểm tra phòng chiếu
     const phongChieu = await phongchieuRouter.findById(id);
     if (!phongChieu) {
       return res.json({ status: false, message: "Phòng chiếu không tồn tại" });
     }
 
-    // Kiểm tra rạp
     if (rap) {
       const rapTonTai = await rapRouter.findById(rap);
       if (!rapTonTai) {
@@ -66,7 +158,6 @@ router.post("/update", async (req, res, next) => {
       phongChieu.rap = rap;
     }
 
-    // Cập nhật thông tin phòng chiếu
     phongChieu.TenPhongChieu = TenPhongChieu;
     phongChieu.SoGhe = SoGhe;
     phongChieu.TrangThai = TrangThai;
@@ -85,8 +176,34 @@ router.post("/update", async (req, res, next) => {
   }
 });
 
-// Xóa một phòng chiếu
-// http://localhost:3000/phongchieu/delete
+/**
+ * @swagger
+ * /phongchieu/delete:
+ *   post:
+ *     summary: Xóa một phòng chiếu
+ *     tags: [PhongChieu]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Thông tin phòng chiếu đã xóa
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ */
 router.post("/delete", async (req, res, next) => {
   try {
     const { id } = req.body;
@@ -107,8 +224,34 @@ router.post("/delete", async (req, res, next) => {
   }
 });
 
-// Lấy thông tin một phòng chiếu
-// http://localhost:3000/phongchieu/get-by-id
+/**
+ * @swagger
+ * /phongchieu/get-by-id:
+ *   post:
+ *     summary: Lấy thông tin một phòng chiếu theo ID
+ *     tags: [PhongChieu]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Thông tin phòng chiếu
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                 phongChieu:
+ *                   type: object
+ */
 router.post("/get-by-id", async (req, res, next) => {
   try {
     const { id } = req.body;

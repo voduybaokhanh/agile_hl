@@ -1,9 +1,56 @@
+/**
+ * @swagger
+ * tags:
+ *   name: Admin
+ *   description: API quản lý admin
+ */
+
 var express = require("express");
 var router = express.Router();
 var adminRouter = require("../models/Admin");
 
-//lất tất cả danh sách của admin
-//http://localhost:3000/admin/list
+/**
+ * @swagger
+ * /admin/list:
+ *   get:
+ *     summary: Lấy danh sách tất cả admin
+ *     tags: [Admin]
+ *     parameters:
+ *       - name: page
+ *         in: query
+ *         description: Trang hiện tại
+ *         required: false
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *       - name: limit
+ *         in: query
+ *         description: Số lượng admin mỗi trang
+ *         required: false
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *     responses:
+ *       200:
+ *         description: Danh sách admin
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                 total:
+ *                   type: integer
+ *                 currentPage:
+ *                   type: integer
+ *                 totalPages:
+ *                   type: integer
+ */
 router.get("/list", async function (req, res, next) {
   try {
     const { page = 1, limit = 10 } = req.query;
@@ -24,8 +71,31 @@ router.get("/list", async function (req, res, next) {
   }
 });
 
-//đăng ký
-//http://localhost:3000/admin/register
+/**
+ * @swagger
+ * /admin/register:
+ *   post:
+ *     summary: Đăng ký admin mới
+ *     tags: [Admin]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Đăng ký thành công
+ *       400:
+ *         description: Thêm thất bại
+ */
 router.post("/register", async function (req, res, next) {
   try {
     const { name, email, password } = req.body;
@@ -35,7 +105,6 @@ router.post("/register", async function (req, res, next) {
         message: "Các trường name, email và password là bắt buộc",
       });
     }
-    // Kiểm tra xem email đã tồn tại chưa
     const isExist = await adminRouter.findOne({ email });
     if (isExist) {
       return res.json({ status: false, message: "Email đã tồn tại" });
@@ -48,8 +117,29 @@ router.post("/register", async function (req, res, next) {
   }
 });
 
-//đăng nhập nhưng email phải có đuôi @admin.com
-//http://localhost:3000/admin/login
+/**
+ * @swagger
+ * /admin/login:
+ *   post:
+ *     summary: Đăng nhập admin
+ *     tags: [Admin]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Đăng nhập thành công
+ *       400:
+ *         description: Thông tin đăng nhập không chính xác
+ */
 router.post("/login", async function (req, res, next) {
   try {
     const { email, password } = req.body;
@@ -59,14 +149,12 @@ router.post("/login", async function (req, res, next) {
         message: "Email và password là bắt buộc",
       });
     }
-    // Kiểm tra đuôi email
     if (!email.endsWith("@admin.com")) {
       return res.json({
         status: false,
         message: "Email phải có đuôi @admin.com",
       });
     }
-    // Tìm admin
     const admin = await adminRouter.findOne({ email, password });
     if (!admin) {
       return res.json({
@@ -80,8 +168,27 @@ router.post("/login", async function (req, res, next) {
   }
 });
 
-//xóa
-//http://localhost:3000/admin/delete
+/**
+ * @swagger
+ * /admin/delete:
+ *   delete:
+ *     summary: Xóa admin
+ *     tags: [Admin]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Xóa thành công
+ *       400:
+ *         description: Xóa thất bại
+ */
 router.delete("/delete", async function (req, res, next) {
   try {
     const { email } = req.body;
@@ -99,8 +206,31 @@ router.delete("/delete", async function (req, res, next) {
   }
 });
 
-//sửa, chỉ sửa được name và password và coi email có tồn tai không
-//http://localhost:3000/admin/update
+/**
+ * @swagger
+ * /admin/update:
+ *   put:
+ *     summary: Cập nhật thông tin admin
+ *     tags: [Admin]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               name:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Cập nhật thành công
+ *       400:
+ *         description: Cập nhật thất bại
+ */
 router.put("/update", async function (req, res, next) {
   try {
     const { email, name, password } = req.body;

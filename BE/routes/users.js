@@ -196,13 +196,13 @@ router.put("/update", async (req, res) => {
   }
 });
 
-// Xóa người dùng (ID truyền qua body)
-// DELETE http://localhost:3000/user/delete
+// Đăng nhập người dùng
+// POST http://localhost:3000/user/login
 /**
  * @swagger
- * /user/delete:
- *   delete:
- *     summary: Xóa người dùng
+ * /user/login:
+ *   post:
+ *     summary: Đăng nhập người dùng
  *     tags: [User]
  *     requestBody:
  *       required: true
@@ -211,29 +211,97 @@ router.put("/update", async (req, res) => {
  *           schema:
  *             type: object
  *             properties:
- *               id:
+ *               email:
  *                 type: string
+ *                 example: user@example.com
+ *               password:
+ *                 type: string
+ *                 example: password123
  *     responses:
  *       200:
- *         description: Người dùng đã được xóa
+ *         description: Đăng nhập thành công
  *         content:
  *           application/json:
  *             schema:
  *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Đăng nhập thành công"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "60d50f6f53f4c8b80c8b4567"
+ *                     name:
+ *                       type: string
+ *                       example: "John Doe"
+ *                     email:
+ *                       type: string
+ *                       example: "user@example.com"
+ *       400:
+ *         description: Lỗi đăng nhập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Email hoặc mật khẩu không chính xác"
  */
-router.delete("/delete", async (req, res) => {
+router.post("/login", async (req, res) => {
   try {
-    const { id } = req.body;
-    if (!id) {
-      return res.json({ status: false, message: "ID không được để trống" });
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.json({
+        status: false,
+        message: "Email và mật khẩu không được để trống",
+      });
     }
-    const deletedUser = await usersRouter.findByIdAndDelete(id);
-    if (!deletedUser) {
-      return res.json({ status: false, message: "Người dùng không tồn tại" });
+
+    // Tìm người dùng theo email
+    const user = await usersRouter.findOne({ email });
+    if (!user) {
+      return res.json({
+        status: false,
+        message: "Email hoặc mật khẩu không chính xác",
+      });
     }
-    res.json({ status: true, message: "Xóa người dùng thành công" });
+
+    // Kiểm tra mật khẩu (so sánh mật khẩu hash, tùy thuộc vào cách mã hóa mật khẩu bạn sử dụng)
+    // Giả sử mật khẩu được mã hóa bằng bcrypt
+    const bcrypt = require("bcrypt");
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) {
+      return res.json({
+        status: false,
+        message: "Email hoặc mật khẩu không chính xác",
+      });
+    }
+
+    // Đăng nhập thành công
+    res.json({
+      status: true,
+      message: "Đăng nhập thành công",
+      data: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
+    });
   } catch (err) {
-    res.json({ status: false, message: "Lỗi server: " + err.message });
+    res.json({
+      status: false,
+      message: "Lỗi khi đăng nhập: " + err.message,
+    });
   }
 });
 
