@@ -1,10 +1,31 @@
+/**
+ * @swagger
+ * tags:
+ *   name: Phim
+ *   description: API quản lý các phim
+ */
+
 var express = require("express");
 var router = express.Router();
 var phimRouter = require("../models/Phim");
 var adminRouter = require("../models/Admin");
 
-// LẤY DANH SÁCH TẤT CẢ PHIM kèm theo thông tin khóa ngoại admin
-// POST http://localhost:3000/phim/list
+/**
+ * @swagger
+ * /phim/list:
+ *   get:
+ *     summary: Lấy danh sách tất cả các phim
+ *     tags: [Phim]
+ *     responses:
+ *       200:
+ *         description: Danh sách các phim
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ */
 router.get("/list", async (req, res) => {
   try {
     const phimList = await phimRouter.find().populate("admin").exec();
@@ -17,8 +38,49 @@ router.get("/list", async (req, res) => {
   }
 });
 
-// Thêm một phim mới
-// http://localhost:3000/phim/add
+/**
+ * @swagger
+ * /phim/add:
+ *   post:
+ *     summary: Thêm một phim mới
+ *     tags: [Phim]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               tenPhim:
+ *                 type: string
+ *               moTa:
+ *                 type: string
+ *               thoiLuong:
+ *                 type: integer
+ *               theLoai:
+ *                 type: string
+ *               ngayPhatHanh:
+ *                 type: string
+ *                 format: date
+ *               trailer:
+ *                 type: string
+ *               admin:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Thêm phim thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ */
 router.post("/add", async (req, res) => {
   try {
     const { tenPhim, moTa, thoiLuong, theLoai, ngayPhatHanh, trailer, admin } =
@@ -45,8 +107,49 @@ router.post("/add", async (req, res) => {
   }
 });
 
-// Cập nhật thông tin một phim
-// http://localhost:3000/phim/update
+/**
+ * @swagger
+ * /phim/update:
+ *   put:
+ *     summary: Cập nhật thông tin một phim
+ *     tags: [Phim]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: string
+ *               tenPhim:
+ *                 type: string
+ *               moTa:
+ *                 type: string
+ *               thoiLuong:
+ *                 type: integer
+ *               theLoai:
+ *                 type: string
+ *               ngayPhatHanh:
+ *                 type: string
+ *                 format: date
+ *               trailer:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Cập nhật phim thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ */
 router.put("/update", async (req, res) => {
   try {
     const { id, tenPhim, moTa, thoiLuong, theLoai, ngayPhatHanh, trailer } =
@@ -73,8 +176,34 @@ router.put("/update", async (req, res) => {
   }
 });
 
-// Xóa một phim
-// http://localhost:3000/phim/delete
+/**
+ * @swagger
+ * /phim/delete:
+ *   delete:
+ *     summary: Xóa một phim
+ *     tags: [Phim]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Xóa phim thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ */
 router.delete("/delete", async (req, res) => {
   try {
     const { id } = req.body;
@@ -92,8 +221,32 @@ router.delete("/delete", async (req, res) => {
   }
 });
 
-// Lấy thông tin chi tiết một phim
-// http://localhost:3000/phim/detail
+/**
+ * @swagger
+ * /phim/detail:
+ *   get:
+ *     summary: Lấy thông tin chi tiết một phim
+ *     tags: [Phim]
+ *     parameters:
+ *       - in: body
+ *         name: id
+ *         description: ID của phim cần lấy
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Thông tin phim chi tiết
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ */
 router.get("/detail", async (req, res) => {
   try {
     const { id } = req.body;
