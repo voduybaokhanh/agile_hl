@@ -1,3 +1,10 @@
+/**
+ * @swagger
+ * tags:
+ *   name: ThanhToan
+ *   description: API quản lý thanh toán
+ */
+
 var express = require("express");
 var router = express.Router();
 var thanhtoanRouter = require("../models/Thanhtoan");
@@ -5,6 +12,27 @@ var veRouter = require("../models/Ve");
 
 // Lấy danh sách tất cả các thanh toán
 // http://localhost:3000/thanhtoan/get-all
+/**
+ * @swagger
+ * /thanhtoan/get-all:
+ *   get:
+ *     summary: Lấy danh sách tất cả các thanh toán
+ *     tags: [ThanhToan]
+ *     responses:
+ *       200:
+ *         description: Danh sách thanh toán
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                 danhSachThanhToan:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ */
 router.get("/get-all", async (req, res, next) => {
   try {
     const danhSachThanhToan = await thanhtoanRouter.find().populate("ve");
@@ -19,6 +47,42 @@ router.get("/get-all", async (req, res, next) => {
 
 // Tạo mới một thanh toán
 // http://localhost:3000/thanhtoan/add
+/**
+ * @swagger
+ * /thanhtoan/add:
+ *   post:
+ *     summary: Tạo mới một thanh toán
+ *     tags: [ThanhToan]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               PhuongThucThanhToan:
+ *                 type: string
+ *               NgayThanhToan:
+ *                 type: string
+ *               TrangThai:
+ *                 type: string
+ *               ve:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Thông tin thanh toán mới tạo
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ */
 router.post("/add", async (req, res, next) => {
   try {
     const { PhuongThucThanhToan, NgayThanhToan, TrangThai, ve } = req.body;
@@ -52,17 +116,46 @@ router.post("/add", async (req, res, next) => {
 
 // Cập nhật thông tin thanh toán
 // http://localhost:3000/thanhtoan/update
+/**
+ * @swagger
+ * /thanhtoan/update:
+ *   post:
+ *     summary: Cập nhật thông tin thanh toán
+ *     tags: [ThanhToan]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: string
+ *               PhuongThucThanhToan:
+ *                 type: string
+ *               NgayThanhToan:
+ *                 type: string
+ *               TrangThai:
+ *                 type: string
+ *               ve:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Thông tin thanh toán sau khi cập nhật
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ */
 router.post("/update", async (req, res, next) => {
   try {
     const { id, PhuongThucThanhToan, NgayThanhToan, TrangThai, ve } = req.body;
 
-    // Kiểm tra thanh toán
     const thanhToan = await thanhtoanRouter.findById(id);
     if (!thanhToan) {
       return res.json({ status: false, message: "Thanh toán không tồn tại" });
     }
 
-    // Kiểm tra vé nếu được cập nhật
     if (ve) {
       const veTonTai = await veRouter.findById(ve);
       if (!veTonTai) {
@@ -92,6 +185,29 @@ router.post("/update", async (req, res, next) => {
 
 // Xóa một thanh toán
 // http://localhost:3000/thanhtoan/delete
+/**
+ * @swagger
+ * /thanhtoan/delete:
+ *   post:
+ *     summary: Xóa một thanh toán
+ *     tags: [ThanhToan]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Thông tin thanh toán đã xóa
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ */
 router.post("/delete", async (req, res, next) => {
   try {
     const { id } = req.body;
@@ -116,6 +232,29 @@ router.post("/delete", async (req, res, next) => {
 
 // Lấy thông tin một thanh toán
 // http://localhost:3000/thanhtoan/get-by-id
+/**
+ * @swagger
+ * /thanhtoan/get-by-id:
+ *   post:
+ *     summary: Lấy thông tin một thanh toán
+ *     tags: [ThanhToan]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Thông tin thanh toán
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ */
 router.post("/get-by-id", async (req, res, next) => {
   try {
     const { id } = req.body;

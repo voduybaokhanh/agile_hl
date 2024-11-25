@@ -1,3 +1,10 @@
+/**
+ * @swagger
+ * tags:
+ *   name: Vé
+ *   description: API quản lý vé
+ */
+
 var express = require("express");
 var router = express.Router();
 var veRouter = require("../models/Ve");
@@ -6,9 +13,33 @@ var userRouter = require("../models/User");
 
 // Lấy danh sách tất cả vé
 // http://localhost:3000/ve/get-all
+/**
+ * @swagger
+ * /ve/get-all:
+ *   get:
+ *     summary: Lấy danh sách tất cả vé
+ *     tags: [Vé]
+ *     responses:
+ *       200:
+ *         description: Danh sách vé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                 danhSachVe:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ */
 router.get("/get-all", async (req, res, next) => {
   try {
-    const danhSachVe = await veRouter.find().populate("suatchieu").populate("user");
+    const danhSachVe = await veRouter
+      .find()
+      .populate("suatchieu")
+      .populate("user");
     res.json({ status: true, danhSachVe });
   } catch (error) {
     res.json({
@@ -20,17 +51,51 @@ router.get("/get-all", async (req, res, next) => {
 
 // Tạo mới một vé
 // http://localhost:3000/ve/add
+/**
+ * @swagger
+ * /ve/add:
+ *   post:
+ *     summary: Tạo mới một vé
+ *     tags: [Vé]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               gheNgoi:
+ *                 type: string
+ *               giaVe:
+ *                 type: number
+ *               suatchieu:
+ *                 type: string
+ *               user:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Tạo vé mới thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ */
 router.post("/add", async (req, res, next) => {
   try {
     const { gheNgoi, giaVe, suatchieu, user } = req.body;
 
-    // Kiểm tra suất chiếu
     const suatchieuTonTai = await suatchieuRouter.findById(suatchieu);
     if (!suatchieuTonTai) {
       return res.json({ status: false, message: "Suất chiếu không tồn tại" });
     }
 
-    // Kiểm tra user
     const userTonTai = await userRouter.findById(user);
     if (!userTonTai) {
       return res.json({ status: false, message: "Người dùng không tồn tại" });
@@ -54,17 +119,55 @@ router.post("/add", async (req, res, next) => {
 
 // Cập nhật thông tin vé
 // http://localhost:3000/ve/update
+/**
+ * @swagger
+ * /ve/update:
+ *   post:
+ *     summary: Cập nhật thông tin vé
+ *     tags: [Vé]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: string
+ *               gheNgoi:
+ *                 type: string
+ *               giaVe:
+ *                 type: number
+ *               suatchieu:
+ *                 type: string
+ *                 nullable: true
+ *               user:
+ *                 type: string
+ *                 nullable: true
+ *     responses:
+ *       200:
+ *         description: Cập nhật vé thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ */
 router.post("/update", async (req, res, next) => {
   try {
     const { id, gheNgoi, giaVe, suatchieu, user } = req.body;
 
-    // Kiểm tra vé
     const ve = await veRouter.findById(id);
     if (!ve) {
       return res.json({ status: false, message: "Vé không tồn tại" });
     }
 
-    // Kiểm tra suất chiếu nếu được cập nhật
     if (suatchieu) {
       const suatchieuTonTai = await suatchieuRouter.findById(suatchieu);
       if (!suatchieuTonTai) {
@@ -73,7 +176,6 @@ router.post("/update", async (req, res, next) => {
       ve.suatchieu = suatchieu;
     }
 
-    // Kiểm tra user nếu được cập nhật
     if (user) {
       const userTonTai = await userRouter.findById(user);
       if (!userTonTai) {
@@ -102,6 +204,36 @@ router.post("/update", async (req, res, next) => {
 
 // Xóa một vé
 // http://localhost:3000/ve/delete
+/**
+ * @swagger
+ * /ve/delete:
+ *   post:
+ *     summary: Xóa một vé
+ *     tags: [Vé]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Xóa vé thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ */
 router.post("/delete", async (req, res, next) => {
   try {
     const { id } = req.body;
@@ -126,11 +258,42 @@ router.post("/delete", async (req, res, next) => {
 
 // Lấy thông tin một vé
 // http://localhost:3000/ve/get-by-id
+/**
+ * @swagger
+ * /ve/get-by-id:
+ *   post:
+ *     summary: Lấy thông tin một vé
+ *     tags: [Vé]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Thông tin chi tiết của vé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                 ve:
+ *                   type: object
+ */
 router.post("/get-by-id", async (req, res, next) => {
   try {
     const { id } = req.body;
 
-    const ve = await veRouter.findById(id).populate("suatchieu").populate("user");
+    const ve = await veRouter
+      .findById(id)
+      .populate("suatchieu")
+      .populate("user");
     if (!ve) {
       return res.json({ status: false, message: "Vé không tồn tại" });
     }
