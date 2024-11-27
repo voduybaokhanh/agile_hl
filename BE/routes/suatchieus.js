@@ -1,3 +1,10 @@
+/**
+ * @swagger
+ * tags:
+ *   name: SuatChieu
+ *   description: API quản lý suất chiếu
+ */
+
 var express = require("express");
 var router = express.Router();
 var suatChieuRouter = require("../models/Suatchieu");
@@ -6,6 +13,27 @@ var phimRouter = require("../models/Phim");
 
 // Lấy danh sách tất cả các suất chiếu
 // http://localhost:3000/suatchieu/get-all
+/**
+ * @swagger
+ * /suatchieu/get-all:
+ *   get:
+ *     summary: Lấy danh sách tất cả các suất chiếu
+ *     tags: [SuatChieu]
+ *     responses:
+ *       200:
+ *         description: Danh sách các suất chiếu
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                 danhSachSuatChieu:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ */
 router.get("/get-all", async (req, res, next) => {
   try {
     const danhSachSuatChieu = await suatChieuRouter.find()
@@ -22,11 +50,44 @@ router.get("/get-all", async (req, res, next) => {
 
 // Tạo mới một suất chiếu
 // http://localhost:3000/suatchieu/add
+/**
+ * @swagger
+ * /suatchieu/add:
+ *   post:
+ *     summary: Tạo mới một suất chiếu
+ *     tags: [SuatChieu]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               thoiGianChieu:
+ *                 type: string
+ *               phim:
+ *                 type: string
+ *               rap:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Thông tin suất chiếu mới tạo
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ */
 router.post("/add", async (req, res, next) => {
   try {
     const { thoiGianChieu, phim, rap } = req.body;
 
-    // Kiểm tra phim và rạp có tồn tại không
     const phimTonTai = await phimRouter.findById(phim);
     if (!phimTonTai) {
       return res.json({ status: false, message: "Phim không tồn tại" });
@@ -55,17 +116,51 @@ router.post("/add", async (req, res, next) => {
 
 // Cập nhật thông tin suất chiếu
 // http://localhost:3000/suatchieu/update
+/**
+ * @swagger
+ * /suatchieu/update:
+ *   post:
+ *     summary: Cập nhật thông tin suất chiếu
+ *     tags: [SuatChieu]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: string
+ *               thoiGianChieu:
+ *                 type: string
+ *               phim:
+ *                 type: string
+ *               rap:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Thông tin suất chiếu sau khi cập nhật
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ */
 router.post("/update", async (req, res, next) => {
   try {
     const { id, thoiGianChieu, phim, rap } = req.body;
 
-    // Kiểm tra suất chiếu
     const suatChieu = await suatChieuRouter.findById(id);
     if (!suatChieu) {
       return res.json({ status: false, message: "Suất chiếu không tồn tại" });
     }
 
-    // Kiểm tra và cập nhật phim, rạp
     if (phim) {
       const phimTonTai = await phimRouter.findById(phim);
       if (!phimTonTai) {
@@ -100,6 +195,29 @@ router.post("/update", async (req, res, next) => {
 
 // Xóa một suất chiếu
 // http://localhost:3000/suatchieu/delete
+/**
+ * @swagger
+ * /suatchieu/delete:
+ *   post:
+ *     summary: Xóa một suất chiếu
+ *     tags: [SuatChieu]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Thông tin suất chiếu đã xóa
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ */
 router.post("/delete", async (req, res, next) => {
   try {
     const { id } = req.body;
@@ -122,6 +240,34 @@ router.post("/delete", async (req, res, next) => {
 
 // Lấy thông tin một suất chiếu
 // http://localhost:3000/suatchieu/get-by-id
+/**
+ * @swagger
+ * /suatchieu/get-by-id:
+ *   post:
+ *     summary: Lấy thông tin một suất chiếu
+ *     tags: [SuatChieu]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Thông tin suất chiếu
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                 suatChieu:
+ *                   type: object
+ */
 router.post("/get-by-id", async (req, res, next) => {
   try {
     const { id } = req.body;

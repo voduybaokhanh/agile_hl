@@ -1,10 +1,32 @@
+// routes/khuyenmai.js
+/**
+ * @swagger
+ * tags:
+ *   name: Khuyến Mãi
+ *   description: API quản lý các khuyến mãi
+ */
+
 var express = require("express");
 var router = express.Router();
 var khuyenmaiRouter = require("../models/Khuyenmai");
 var adminRouter = require("../models/Admin");
 
-// Lấy danh sách tất cả khuyến mãi
-// GET http://localhost:3000/khuyenmai/list
+/**
+ * @swagger
+ * /khuyenmai/list:
+ *   get:
+ *     summary: Lấy danh sách tất cả khuyến mãi
+ *     tags: [Khuyến Mãi]
+ *     responses:
+ *       200:
+ *         description: Danh sách các khuyến mãi
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ */
 router.get("/list", async (req, res) => {
   try {
     const promotions = await khuyenmaiRouter
@@ -16,8 +38,34 @@ router.get("/list", async (req, res) => {
   }
 });
 
-// Lấy chi tiết khuyến mãi theo ID (truyền qua body)
-// POST http://localhost:3000/khuyenmai/detail
+/**
+ * @swagger
+ * /khuyenmai/detail:
+ *   post:
+ *     summary: Lấy chi tiết khuyến mãi theo ID
+ *     tags: [Khuyến Mãi]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Thông tin chi tiết khuyến mãi
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ */
 router.post("/detail", async (req, res) => {
   try {
     const { id } = req.body;
@@ -36,8 +84,52 @@ router.post("/detail", async (req, res) => {
   }
 });
 
-// Tạo khuyến mãi mới
-// POST http://localhost:3000/khuyenmai/add
+/**
+ * @swagger
+ * /khuyenmai/add:
+ *   post:
+ *     summary: Tạo khuyến mãi mới
+ *     tags: [Khuyến Mãi]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               tieuDe:
+ *                 type: string
+ *               noiDung:
+ *                 type: string
+ *               mucGiamGia:
+ *                 type: number
+ *               loaiKhuyenMai:
+ *                 type: string
+ *               maKhuyenMai:
+ *                 type: string
+ *               ngayBatDau:
+ *                 type: string
+ *                 format: date
+ *               ngayKetThuc:
+ *                 type: string
+ *                 format: date
+ *               admin:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Tạo khuyến mãi thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ */
 router.post("/add", async (req, res) => {
   try {
     const {
@@ -50,6 +142,7 @@ router.post("/add", async (req, res) => {
       ngayKetThuc,
       admin,
     } = req.body;
+
     if (
       !tieuDe ||
       !noiDung ||
@@ -65,10 +158,12 @@ router.post("/add", async (req, res) => {
         message: "Thông tin không được để trống",
       });
     }
+
     const adminExists = await adminRouter.findById(admin);
     if (!adminExists) {
       return res.json({ status: false, message: "Người dùng không tồn tại" });
     }
+
     const newPromotion = new khuyenmaiRouter({
       tieuDe,
       noiDung,
@@ -79,6 +174,7 @@ router.post("/add", async (req, res) => {
       ngayKetThuc,
       admin,
     });
+
     await newPromotion.save();
     res.json({
       status: true,
@@ -93,8 +189,54 @@ router.post("/add", async (req, res) => {
   }
 });
 
-// Cập nhật thông tin khuyến mãi
-// PUT http://localhost:3000/khuyenmai/update
+/**
+ * @swagger
+ * /khuyenmai/update:
+ *   put:
+ *     summary: Cập nhật thông tin khuyến mãi
+ *     tags: [Khuyến Mãi]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: string
+ *               tieuDe:
+ *                 type: string
+ *               noiDung:
+ *                 type: string
+ *               mucGiamGia:
+ *                 type: number
+ *               loaiKhuyenMai:
+ *                 type: string
+ *               maKhuyenMai:
+ *                 type: string
+ *               ngayBatDau:
+ *                 type: string
+ *                 format: date
+ *               ngayKetThuc:
+ *                 type: string
+ *                 format: date
+ *               admin:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Cập nhật khuyến mãi thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ */
 router.put("/update", async (req, res) => {
   try {
     const {
@@ -150,8 +292,34 @@ router.put("/update", async (req, res) => {
   }
 });
 
-// Xóa khuyến mãi
-// DELETE http://localhost:3000/khuyenmai/delete
+/**
+ * @swagger
+ * /khuyenmai/delete:
+ *   delete:
+ *     summary: Xóa khuyến mãi
+ *     tags: [Khuyến Mãi]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Xóa khuyến mãi thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ */
 router.delete("/delete", async (req, res) => {
   try {
     const { id } = req.body;
@@ -167,7 +335,7 @@ router.delete("/delete", async (req, res) => {
 
     res.json({ status: true, message: "Xóa khuyến mãi thành công" });
   } catch (err) {
-    res.json({ status: false, message: "Lỗi server: " + err.message });
+    res.json({ status: false, message: "Lỗi khi xóa: " + err.message });
   }
 });
 

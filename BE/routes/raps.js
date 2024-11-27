@@ -1,9 +1,35 @@
+/**
+ * @swagger
+ * tags:
+ *   name: Rap
+ *   description: API quản lý các rạp chiếu phim
+ */
+
 var express = require("express");
 var router = express.Router();
 var rapRouter = require("../models/Rap");
 
-// Lấy danh sách tất cả các rạp
-// http://localhost:3000/rap/get-all
+/**
+ * @swagger
+ * /rap/get-all:
+ *   post:
+ *     summary: Lấy danh sách tất cả các rạp
+ *     tags: [Rap]
+ *     responses:
+ *       200:
+ *         description: Danh sách các rạp chiếu phim
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                 danhSachRap:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ */
 router.post("/get-all", async (req, res, next) => {
   try {
     const danhSachRap = await rapRouter.find();
@@ -11,13 +37,47 @@ router.post("/get-all", async (req, res, next) => {
   } catch (error) {
     res.json({
       status: false,
-      message: "Lỗi khi lấy danh sách rạp" + error.message,
+      message: "Lỗi khi lấy danh sách rạp: " + error.message,
     });
   }
 });
 
-// Tạo mới một rạp
-// http://localhost:3000/rap/add
+/**
+ * @swagger
+ * /rap/add:
+ *   post:
+ *     summary: Tạo mới một rạp chiếu phim
+ *     tags: [Rap]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               TenRap:
+ *                 type: string
+ *               DiaChi:
+ *                 type: string
+ *               SoPhong:
+ *                 type: integer
+ *               TrangThai:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Thông tin rạp chiếu phim mới tạo
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ */
 router.post("/add", async (req, res, next) => {
   try {
     const { TenRap, DiaChi, SoPhong, TrangThai } = req.body;
@@ -32,8 +92,44 @@ router.post("/add", async (req, res, next) => {
   }
 });
 
-// Cập nhật thông tin rạp
-// http://localhost:3000/rap/update
+/**
+ * @swagger
+ * /rap/update:
+ *   post:
+ *     summary: Cập nhật thông tin của một rạp
+ *     tags: [Rap]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: string
+ *               TenRap:
+ *                 type: string
+ *               DiaChi:
+ *                 type: string
+ *               SoPhong:
+ *                 type: integer
+ *               TrangThai:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Thông tin rạp sau khi cập nhật
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ */
 router.post("/update", async (req, res, next) => {
   try {
     const { id, TenRap, DiaChi, SoPhong, TrangThai } = req.body;
@@ -59,8 +155,34 @@ router.post("/update", async (req, res, next) => {
   }
 });
 
-// Xóa một rạp
-// http://localhost:3000/rap/delete
+/**
+ * @swagger
+ * /rap/delete:
+ *   post:
+ *     summary: Xóa một rạp chiếu phim
+ *     tags: [Rap]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Thông tin rạp đã xóa
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ */
 router.post("/delete", async (req, res, next) => {
   try {
     const { id } = req.body;
@@ -77,11 +199,34 @@ router.post("/delete", async (req, res, next) => {
   }
 });
 
-// Lấy thông tin một rạp
-// http://localhost:3000/rap/get-by-id
+/**
+ * @swagger
+ * /rap/get-by-id:
+ *   get:
+ *     summary: Lấy thông tin một rạp theo ID
+ *     tags: [Rap]
+ *     parameters:
+ *       - in: query
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Thông tin của rạp
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                 rap:
+ *                   type: object
+ */
 router.get("/get-by-id", async (req, res, next) => {
   try {
-    const { id } = req.body;
+    const { id } = req.query;
     const rap = await rapRouter.findById(id);
     if (!rap) {
       return res.json({ status: false, message: "Rạp không tồn tại" });
